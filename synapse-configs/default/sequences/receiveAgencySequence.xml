@@ -44,7 +44,7 @@
               expression="get-property('LevelLookupId')"/>
       </args>
    </payloadFactory>
-   <property name="SOAPAction" value="urn:Select_LookupID" scope="transport"/>
+   <header name="Action" value="urn:Select_LookupID" />
    <call>
       <endpoint key="AgencySvcEndpoint"/>
    </call>
@@ -61,7 +61,7 @@
               expression="get-property('ImageId')"/>
       </args>
    </payloadFactory>
-   <property name="SOAPAction" value="urn:Select_Image" scope="transport"/>
+   <header name="Action" value="urn:Select_Image"/>
    <call>
       <endpoint key="ImageSvcEndpoint"/>
    </call>
@@ -79,7 +79,7 @@
               expression="get-property('AddressId')"/>
       </args>
    </payloadFactory>
-   <property name="SOAPAction" value="urn:Select_Address" scope="transport"/>
+   <header name="Action" value="urn:Select_Address" />
    <call>
       <endpoint key="AddressSvcEndpoint"/>
    </call>
@@ -99,10 +99,8 @@
          <arg value="null"/>
       </args>
    </payloadFactory>
-   <property name="SOAPAction"
-             value="urn:Select_RssFeed"
-             scope="transport"
-             type="STRING"/>
+   <header name="Action"
+             value="urn:Select_RssFeed" />
    <call>
       <endpoint key="StatisticsSvcEndpoint"/>
    </call>
@@ -122,7 +120,7 @@
          <arg value="null"/>
       </args>
    </payloadFactory>
-   <property name="SOAPAction" value="urn:Select_SocialMedia" scope="transport"/>
+   <header name="Action" value="urn:Select_SocialMedia" />
    <call>
       <endpoint key="StatisticsSvcEndpoint"/>
    </call>
@@ -143,7 +141,7 @@
          <arg value="null"/>
       </args>
    </payloadFactory>
-   <property name="SOAPAction" value="urn:Select_Contact" scope="transport"/>
+   <header name="Action" value="urn:Select_Contact" scope="transport"/>
    <call>
       <endpoint key="ContactSvcEndpoint"/>
    </call>
@@ -164,7 +162,7 @@
          <arg value="null"/>
       </args>
    </payloadFactory>
-   <property name="SOAPAction" value="urn:Select_Keyword" scope="transport"/>
+   <header name="Action" value="urn:Select_Keyword" />
    <call>
       <endpoint key="AgencySvcEndpoint"/>
    </call>
@@ -185,7 +183,7 @@
          <arg value="null"/>
       </args>
    </payloadFactory>
-   <property name="SOAPAction" value="urn:Select_Category" scope="transport"/>
+   <header name="Action" value="urn:Select_Category" />
    <call>
       <endpoint key="AgencySvcEndpoint"/>
    </call>
@@ -205,7 +203,7 @@
          <arg value="null"/>
       </args>
    </payloadFactory>
-   <property name="SOAPAction" value="urn:Select_Page" scope="transport"/>
+   <header name="Action" value="urn:Select_Page" />
    <call>
       <endpoint key="StatisticsSvcEndpoint"/>
    </call>
@@ -224,7 +222,7 @@
          <arg value="null"/>
       </args>
    </payloadFactory>
-   <property name="SOAPAction" value="urn:Select_Service" scope="transport"/>
+   <header name="Action" value="urn:Select_Service" />
    <send receive="receiveServicesSequence">
       <endpoint key="AgencySvcEndpoint"/>
    </send>

@@ -18,7 +18,7 @@
 			<arg evaluator="xml" expression="get-property('OrgId')" />
 		</args>
 	</payloadFactory>
-	<property name="SOAPAction" value="urn:select_suborg" scope="transport" />
+	<header name="Action" value="urn:select_suborg" />
 	<call>
 		<endpoint key="AgencySvcEndpoint" />
 	</call>
@@ -44,8 +44,7 @@
 								<arg evaluator="xml" expression="get-property('childOrgId')" />
 							</args>
 						</payloadFactory>
-						<property name="SOAPAction" value="urn:Select_SubOrganization"
-							scope="transport" />
+						<header name="Action" value="urn:Select_SubOrganization" />
 						<call>
 							<endpoint key="AgencySvcEndpoint"></endpoint>
 						</call>

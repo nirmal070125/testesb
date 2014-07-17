@@ -24,8 +24,7 @@
 								<arg value="null" />
 							</args>
 						</payloadFactory>
-						<property name="SOAPAction" value="urn:Select_Keyword"
-							scope="transport" />
+						<header name="Action" value="urn:Select_Keyword"/>
 						<call>
 							<endpoint key="AgencySvcEndpoint" />
 						</call>
@@ -44,8 +43,7 @@
 								<arg value="null" />
 							</args>
 						</payloadFactory>
-						<property name="SOAPAction" value="urn:Select_Contact"
-							scope="transport" />
+						<header name="Action" value="urn:Select_Contact" />
 						<call>
 							<endpoint key="ContactSvcEndpoint" />
 						</call>
@@ -64,8 +62,7 @@
 								<arg value="null" />
 							</args>
 						</payloadFactory>
-						<property name="SOAPAction" value="urn:Select_Category"
-							scope="transport" />
+						<header name="Action" value="urn:Select_Category" />
 						<call>
 							<endpoint key="AgencySvcEndpoint" />
 						</call>
