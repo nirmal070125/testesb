@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <endpoint xmlns="http://ws.apache.org/ns/synapse" name="AgencySvcEndpoint">
-   <address uri="http://localhost:9764/services/agency_service/"/>
+   <address uri="http://appserver.qaaz.gov/t/wso2.com/services/agency_service/"/>
 </endpoint>
