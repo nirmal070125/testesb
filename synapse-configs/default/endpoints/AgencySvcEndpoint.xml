@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <endpoint xmlns="http://ws.apache.org/ns/synapse" name="AgencySvcEndpoint">
-    <property name="HTTP_METHOD" value="POST" />
+    <property name="HTTP_METHOD" value="POST" scope="axis2" />
    <address uri="http://appserver.qaaz.gov/services/t/wso2.com/agency_service/" />
 </endpoint>
