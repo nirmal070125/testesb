@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="receiveCategoriesSequence">
+   <property xmlns:ns="http://org.apache.synapse/xsd"
+             xmlns:m0="http://ws.wso2.org/dataservice"
+             name="CategoriesSvcResponse"
+             expression="$body/m0:categories"
+             scope="default"
+             type="OM"/>
+   <enrich>
+      <source type="inline" clone="true">
+         <categories xmlns="http://ws.wso2.org/dataservice"/>
+      </source>
+      <target type="property" property="CategoriesSvcAltResponse"/>
+   </enrich>
+   <filter xmlns:ns="http://org.apache.synapse/xsd"
+           xmlns:m0="http://ws.wso2.org/dataservice"
+           xpath="get-property('CategoriesSvcResponse')/m0:category">
+      <then>
+         <property name="CategoriesSvcAltResponse"
+                   expression="get-property('CategoriesSvcAltResponse')"
+                   scope="operation"
+                   type="OM"/>
+         <iterate continueParent="true"
+                  expression="//m0:categories/m0:category/m0:string"
+                  sequential="true">
+            <target>
+               <sequence>
+                  <property name="svccategory" expression="$body" scope="default" type="OM"/>
+                  <enrich>
+                     <source clone="true" xpath="get-property('svccategory')/m0:string"/>
+                     <target action="child"
+                             xpath="get-property('operation','CategoriesSvcAltResponse')"/>
+                  </enrich>
+               </sequence>
+            </target>
+         </iterate>
+         <property name="CategoriesSvcAltResponse"
+                   expression="get-property('operation','CategoriesSvcAltResponse')"
+                   scope="default"
+                   type="OM"/>
+      </then>
+      <else/>
+   </filter>
+   <filter xmlns:ns="http://org.apache.synapse/xsd"
+           xmlns:m0="http://ws.wso2.org/dataservice"
+           xpath="get-property('ServicesSvcResponse')">
+      <then>
+         <enrich>
+            <source clone="true" xpath="get-property('CategoriesSvcAltResponse')"/>
+            <target action="child" xpath="get-property('ServicesSvcResponse')"/>
+         </enrich>
+      </then>
+      <else/>
+   </filter>
+</sequence>

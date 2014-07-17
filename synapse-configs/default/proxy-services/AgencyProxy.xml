@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<proxy xmlns="http://ws.apache.org/ns/synapse"
+       name="AgencyProxy"
+       transports="https http"
+       startOnLoad="true"
+       trace="disable">
+   <description/>
+   <target outSequence="agencyOutSequence" faultSequence="fault">
+      <inSequence>
+         <log level="custom">
+            <property name="initail request" value="***"/>
+         </log>
+         <send receive="receiveAgencySequence">
+            <endpoint key="AgencySvcEndpoint"/>
+         </send>
+      </inSequence>
+   </target>
+</proxy>

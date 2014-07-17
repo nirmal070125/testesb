@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="receiveServicesSequence">
+   <filter xmlns:ns="http://org.apache.synapse/xsd"
+           xmlns:m0="http://ws.wso2.org/dataservice"
+           xpath="//m0:services/m0:service">
+      <then>
+         <iterate id="itrLevel1-1" expression="//m0:services/m0:service">
+            <target>
+               <sequence>
+                  <property name="ServicesSvcResponse"
+                            expression="$body/m0:service"
+                            scope="default"
+                            type="OM"/>
+                  <property name="ServiceId"
+                            expression="//m0:id/text()"
+                            scope="default"
+                            type="STRING"/>
+                  <payloadFactory media-type="xml">
+                     <format>
+                        <m1:Select_Keyword xmlns:m1="http://ws.wso2.org/dataservice">
+                           <m1:OrgID>$1</m1:OrgID>
+                           <m1:ServiceID>$2</m1:ServiceID>
+                           <m1:KeywordID>$3</m1:KeywordID>
+                        </m1:Select_Keyword>
+                     </format>
+                     <args>
+                        <arg value="null"/>
+                        <arg evaluator="xml" expression="get-property('ServiceId')"/>
+                        <arg value="null"/>
+                     </args>
+                  </payloadFactory>
+                  <property name="SOAPAction" value="urn:Select_Keyword" scope="transport"/>
+                  <call>
+                     <endpoint key="AgencySvcEndpoint"/>
+                  </call>
+                  <sequence key="receiveKeywordsSequence"/>
+                  <payloadFactory media-type="xml">
+                     <format>
+                        <m1:Select_Contact xmlns:m1="http://ws.wso2.org/dataservice">
+                           <m1:orgID>$1</m1:orgID>
+                           <m1:serviceID>$2</m1:serviceID>
+                           <m1:contactID>$3</m1:contactID>
+                        </m1:Select_Contact>
+                     </format>
+                     <args>
+                        <arg value="null"/>
+                        <arg evaluator="xml" expression="get-property('ServiceId')"/>
+                        <arg value="null"/>
+                     </args>
+                  </payloadFactory>
+                  <property name="SOAPAction" value="urn:Select_Contact" scope="transport"/>
+                  <call>
+                     <endpoint key="ContactSvcEndpoint"/>
+                  </call>
+                  <sequence key="receiveContactSequence"/>
+                  <payloadFactory media-type="xml">
+                     <format>
+                        <m1:Select_Category xmlns:m1="http://ws.wso2.org/dataservice">
+                           <m1:OrgID>$1</m1:OrgID>
+                           <m1:ServiceID>$2</m1:ServiceID>
+                           <m1:CategoryID>$3</m1:CategoryID>
+                        </m1:Select_Category>
+                     </format>
+                     <args>
+                        <arg value="null"/>
+                        <arg evaluator="xml" expression="get-property('ServiceId')"/>
+                        <arg value="null"/>
+                     </args>
+                  </payloadFactory>
+                  <property name="SOAPAction" value="urn:Select_Category" scope="transport"/>
+                  <call>
+                     <endpoint key="AgencySvcEndpoint"/>
+                  </call>
+                  <sequence key="receiveCategoriesSequence"/>
+                  <enrich>
+                     <source clone="true" xpath="get-property('ServicesSvcResponse')"/>
+                     <target type="body"/>
+                  </enrich>
+                  <send>
+                     <endpoint key="DummyProxyEndpoint"/>
+                  </send>
+               </sequence>
+            </target>
+         </iterate>
+      </then>
+      <else>
+         <enrich>
+            <source clone="true" xpath="$body/m0:services"/>
+            <target action="child"
+                    xpath="get-property('AgencySvcResponse')/m0:organization"/>
+         </enrich>
+         <send>
+            <endpoint key="DummyProxyEndpoint"/>
+         </send>
+      </else>
+   </filter>
+</sequence>

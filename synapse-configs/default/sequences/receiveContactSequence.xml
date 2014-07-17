@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="receiveContactSequence">
+   <property xmlns:ns="http://org.apache.synapse/xsd"
+             xmlns:m0="http://ws.wso2.org/dataservice"
+             name="ContactSvcResponse"
+             expression="$body"
+             scope="default"
+             type="OM"/>
+   <filter xmlns:ns="http://org.apache.synapse/xsd"
+           xmlns:m0="http://ws.wso2.org/dataservice"
+           xpath="get-property('ServicesSvcResponse')">
+      <then>
+         <enrich>
+            <source clone="true" xpath="$body/m0:contacts"/>
+            <target action="sibling" xpath="get-property('ServicesSvcResponse')/m0:name"/>
+         </enrich>
+      </then>
+      <else/>
+   </filter>
+</sequence>

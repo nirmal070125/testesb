@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="receiveSubOrgContactSequence">
+ 
+   <filter xmlns:ns="http://org.apache.synapse/xsd"
+           xmlns:m0="http://ws.wso2.org/dataservice"
+           xpath="get-property('SubOrgServicesSvcResponse')">
+      <then>
+         <enrich>
+            <source clone="true" xpath="$body/m0:contacts"/>
+            <target action="sibling" xpath="get-property('SubOrgServicesSvcResponse')/m0:name"/>
+         </enrich>
+      </then>
+      <else/>
+   </filter>
+</sequence>

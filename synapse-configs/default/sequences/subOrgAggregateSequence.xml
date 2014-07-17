@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse"
+          name="subOrgAggregateSequence"
+          trace="disable">
+   <log >
+      <property name="subOrgAggregateSequence----------------------"
+                value="--------------------"/>
+   </log>
+    <filter xmlns:ns="http://org.apache.synapse/xsd"
+           xmlns:m0="http://ws.wso2.org/dataservice"
+           xpath="//m0:service">
+      <then>
+   <aggregate id="itrLevel1-3">
+      <completeCondition>
+         <messageCount min="-1" max="-1"/>
+      </completeCondition>
+      <onComplete xmlns:ns="http://org.apache.synapse/xsd"
+                  xmlns:s1="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:m0="http://ws.wso2.org/dataservice"
+                  expression="//m0:service">
+	  <log >
+      <property name="aggregateServiceSequence-----itrLevel1-3333333333333333-----------------"
+                value="--------------------"/>
+   </log>
+         <payloadFactory media-type="xml">
+            <format>
+               <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+                  <soapenv:Body>
+                     <m0:services>$1</m0:services>
+                  </soapenv:Body>
+               </soapenv:Envelope>
+            </format>
+            <args>
+               <arg evaluator="xml" expression="$body/m0:service"/>
+            </args>
+         </payloadFactory>
+         <enrich>
+            <source clone="false" xpath="$body/m0:services"/>
+            <target action="child"
+                    xpath="get-property('SubOrgAgencySvcResponse')/m0:organization"/>
+         </enrich>		
+      </onComplete>	  
+   </aggregate>
+   </then>
+    <else>
+	   <filter xmlns:ns="http://org.apache.synapse/xsd"
+           xmlns:m0="http://ws.wso2.org/dataservice"
+           xpath="//m0:organizations">
+		   <then>
+     <aggregate id="itrLevel2-1">
+      <completeCondition>
+         <messageCount min="-1" max="-1"/>
+      </completeCondition>
+      <onComplete xmlns:ns="http://org.apache.synapse/xsd"
+                  xmlns:s1="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:m0="http://ws.wso2.org/dataservice"
+                  expression="//m0:organizations">
+				  <log >
+      <property name="aggregateServiceSequence-------itr2222222222222---------------"
+                value="--------------------"/>
+   </log>
+         <payloadFactory media-type="xml">
+            <format>
+               <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+                  <soapenv:Body>
+                     <m0:organizations>$1</m0:organizations>
+                  </soapenv:Body>
+               </soapenv:Envelope>
+            </format>
+            <args>
+               <arg evaluator="xml" expression="$body/m0:organizations/m0:organization"/>
+            </args>
+         </payloadFactory>
+		  <enrich>
+            <source clone="false" xpath="$body/m0:organizations"/>
+            <target action="child"
+                    xpath="get-property('AgencySvcResponse')/m0:organization"/>
+         </enrich>
+		 <log>
+		   <property name="receiveSubOrgAggregateAgencySequence_else_condition"
+                      expression="get-property('AgencySvcResponse')"/>
+             </log>
+      <enrich>
+      <source xmlns:ns="http://org.apache.synapse/xsd"
+              clone="true"
+              xpath="get-property('AgencySvcResponse')"/>
+      <target type="body"/>
+		</enrich>
+		<send/>
+      </onComplete>
+   </aggregate>
+   </then>
+   <else/>
+   </filter>
+   </else>
+   </filter>  
+</sequence>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="receiveSubOrgKeywordsSequence">
+   <log>
+      <property name="sub org svc keyword_service_response" value="*****"/>
+   </log>
+   <property xmlns:ns="http://org.apache.synapse/xsd"
+             xmlns:m0="http://ws.wso2.org/dataservice"
+             name="SubOrgKeywordSvcResponse"
+             expression="$body/m0:keywords"
+             scope="default"
+             type="OM"/>
+   <enrich>
+      <source type="inline" clone="true">
+         <keywords xmlns="http://ws.wso2.org/dataservice"/>
+      </source>
+      <target type="property" property="SubOrgKeywordSvcAltResponse"/>
+   </enrich>
+   <filter xmlns:ns="http://org.apache.synapse/xsd"
+           xmlns:m0="http://ws.wso2.org/dataservice"
+           xpath="get-property('SubOrgKeywordSvcResponse')/m0:keyword">
+      <then>
+         <property name="SubOrgKeywordSvcAltResponse"
+                   expression="get-property('SubOrgKeywordSvcAltResponse')"
+                   scope="operation"
+                   type="OM"/>
+         <iterate continueParent="true"
+                  expression="//m0:keywords/m0:keyword/m0:string"
+                  sequential="true">
+            <target>
+               <sequence>
+                  <property name="subOrgSvckeyword" expression="$body" scope="default" type="OM"/>
+                  <enrich>
+                     <source clone="true" xpath="get-property('subOrgSvckeyword')/m0:string"/>
+                     <target action="child"
+                             xpath="get-property('operation','SubOrgKeywordSvcAltResponse')"/>
+                  </enrich>
+                  <property name="SubOrgKeywordSvcAltResponse"
+                            expression="get-property('SubOrgKeywordSvcAltResponse')"
+                            scope="operation"
+                            type="OM"/>
+               </sequence>
+            </target>
+         </iterate>
+         <property name="SubOrgKeywordSvcAltResponse"
+                   expression="get-property('operation','SubOrgKeywordSvcAltResponse')"
+                   scope="default"
+                   type="OM"/>
+      </then>
+      <else/>
+   </filter>
+   <filter xmlns:ns="http://org.apache.synapse/xsd"
+           xmlns:m0="http://ws.wso2.org/dataservice"
+           xpath="get-property('SubOrgServicesSvcResponse')">
+      <then>
+         <enrich>
+            <source clone="true" xpath="get-property('SubOrgKeywordSvcAltResponse')"/>
+            <target action="sibling" xpath="get-property('SubOrgServicesSvcResponse')/m0:name"/>
+         </enrich>
+      </then>
+      <else/>
+   </filter>
+</sequence>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="receiveRssStatisticsSequence">
+   <log level="custom">
+      <property name="RSS service response" value="***********"/>
+   </log>
+   <filter xmlns:ns="http://org.apache.synapse/xsd"
+           xmlns:m0="http://ws.wso2.org/dataservice"
+           xpath="get-property('AgencySvcResponse')/m0:organization">
+      <then>
+         <enrich>
+            <source clone="true" xpath="$body/m0:rssfeeds"/>
+            <target action="child"
+                    xpath="get-property('AgencySvcResponse')/m0:organization"/>
+         </enrich>
+      </then>
+      <else/>
+   </filter>  
+</sequence>

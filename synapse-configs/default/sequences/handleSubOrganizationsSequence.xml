@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="handleSubOrganizationsSequence">
+	<log>
+		<property name="handle sub orgs" value="*****" />
+	</log>
+
+	<payloadFactory media-type="xml">
+		<format>
+			<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+				<soapenv:Body>
+					<m1:select_suborg xmlns:m1="http://ws.wso2.org/dataservice">
+						<m1:org_id>$1</m1:org_id>
+					</m1:select_suborg>
+				</soapenv:Body>
+			</soapenv:Envelope>
+		</format>
+		<args>
+			<arg evaluator="xml" expression="get-property('OrgId')" />
+		</args>
+	</payloadFactory>
+	<property name="SOAPAction" value="urn:select_suborg" scope="transport" />
+	<call>
+		<endpoint key="AgencySvcEndpoint" />
+	</call>
+	
+<property name="OrgId" action="remove" scope="default"/>
+
+	<filter xmlns:ns="http://org.apache.synapse/xsd" xmlns:m0="http://ws.wso2.org/dataservice"
+		xpath="$body/m0:organizations/m0:organization">
+		<then>
+			<iterate id="itrLevel2-1" expression="$body/m0:organizations/m0:organization"
+				sequential="true">
+				<target>
+					<sequence>
+						<property name="childOrgId" expression="//m0:organization/m0:id"
+							scope="default" type="STRING" />
+						<payloadFactory media-type="xml">
+							<format>
+								<m0:Select_SubOrganization>
+									<m0:org_id>$1</m0:org_id>
+								</m0:Select_SubOrganization>
+							</format>
+							<args>
+								<arg evaluator="xml" expression="get-property('childOrgId')" />
+							</args>
+						</payloadFactory>
+						<property name="SOAPAction" value="urn:Select_SubOrganization"
+							scope="transport" />
+						<call>
+							<endpoint key="AgencySvcEndpoint"></endpoint>
+						</call>
+						<sequence key="receiveSubOrgAgencySequence"></sequence>
+					</sequence>
+				</target>
+			</iterate>
+		</then>
+		<else>			
+			<enrich>
+				<source xmlns:ns="http://org.apache.synapse/xsd" clone="false"
+					xpath="get-property('AgencySvcResponse')" />
+				<target type="body" />
+			</enrich>
+			<send />
+		</else>
+	</filter>
+</sequence>

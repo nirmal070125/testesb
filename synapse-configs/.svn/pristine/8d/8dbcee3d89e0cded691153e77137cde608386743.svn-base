@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse"
+          name="receiveAgencyLevelLookupSequence">
+   <log>
+      <property name="lookup service response" value="******"/>
+   </log>
+   <property xmlns:ns="http://org.apache.synapse/xsd"
+             xmlns:m0="http://ws.wso2.org/dataservice"
+             name="LookupSvcResponse"
+             expression="$body/m0:levelLookup"
+             scope="default"
+             type="OM"/>
+   <enrich>
+      <source xmlns:ns="http://org.apache.synapse/xsd"
+              xmlns:m0="http://ws.wso2.org/dataservice"
+              clone="true"
+              xpath="get-property('AgencySvcResponse')"/>
+      <target type="body"/>
+   </enrich>
+   <filter xmlns:ns="http://org.apache.synapse/xsd"
+           xmlns:m0="http://ws.wso2.org/dataservice"
+           xpath="$body/m0:organizations/m0:organization/m0:levelLookupId">
+      <then>
+         <enrich>
+            <source clone="true" xpath="get-property('LookupSvcResponse')/m0:level"/>
+            <target xpath="$body/m0:organizations/m0:organization/m0:levelLookupId"/>
+         </enrich>
+      </then>
+      <else/>
+   </filter>
+   <property xmlns:ns="http://org.apache.synapse/xsd"
+             xmlns:m0="http://ws.wso2.org/dataservice"
+             name="AgencySvcResponse"
+             expression="$body/m0:organizations"
+             scope="default"
+             type="OM"/>
+</sequence>

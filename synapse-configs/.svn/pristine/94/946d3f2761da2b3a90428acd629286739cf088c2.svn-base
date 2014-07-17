@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="receiveSubOrgAddressSequence">
+   <log>
+      <property name="Sub org Address service response" value="***********"/>
+   </log>
+   <property xmlns:ns="http://org.apache.synapse/xsd"
+             xmlns:m0="http://ws.wso2.org/dataservice"
+             name="SubOrgAddressSvcResponse"
+             expression="$body/m0:addresses"
+             scope="default"
+             type="OM"/>
+   <enrich>
+      <source xmlns:ns="http://org.apache.synapse/xsd"
+              xmlns:m0="http://ws.wso2.org/dataservice"
+              clone="true"
+              xpath="get-property('SubOrgAgencySvcResponse')"/>
+      <target type="body"/>
+   </enrich>
+   <filter xmlns:ns="http://org.apache.synapse/xsd"
+           xmlns:m0="http://ws.wso2.org/dataservice"
+           xpath="$body/m0:organizations/m0:organization/m0:addressId">
+      <then>
+         <enrich>
+            <source clone="true" xpath="get-property('SubOrgAddressSvcResponse')"/>
+            <target xpath="$body/m0:organizations/m0:organization/m0:addressId"/>
+         </enrich>
+      </then>
+      <else/>
+   </filter>
+   <property xmlns:ns="http://org.apache.synapse/xsd"
+             xmlns:m0="http://ws.wso2.org/dataservice"
+             name="SubOrgAgencySvcResponse"
+             expression="$body/m0:organizations"
+             scope="default"
+             type="OM"/>
+</sequence>

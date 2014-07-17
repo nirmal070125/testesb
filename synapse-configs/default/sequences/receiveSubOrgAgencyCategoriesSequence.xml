@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse"
+          name="receiveSubOrgAgencyCategoriesSequence"
+          onError="fault">
+   <property xmlns:ns="http://org.apache.synapse/xsd"
+             xmlns:m0="http://ws.wso2.org/dataservice"
+             name="SubOrgAgencyCategoriesSvcResponse"
+             expression="$body/m0:categories"
+             scope="default"
+             type="OM"/>
+   <enrich>
+      <source type="inline" clone="true">
+         <categories xmlns="http://ws.wso2.org/dataservice"/>
+      </source>
+      <target type="property" property="SubOrgAgencyCategoriesSvcAltResponse"/>
+   </enrich>
+   <filter xmlns:ns="http://org.apache.synapse/xsd"
+           xmlns:m0="http://ws.wso2.org/dataservice"
+           xpath="get-property('SubOrgAgencyCategoriesSvcResponse')/m0:category/m0:string">
+      <then>
+         <property name="SubOrgAgencyCategoriesSvcAltResponse"
+                   expression="get-property('SubOrgAgencyCategoriesSvcAltResponse')"
+                   scope="operation"
+                   type="OM"/>
+         <iterate continueParent="true"
+                  expression="//m0:categories/m0:category/m0:string"
+                  sequential="true">
+            <target>
+               <sequence>
+                  <property name="subagencycategory"
+                            expression="$body"
+                            scope="default"
+                            type="OM"/>
+                  <enrich>
+                     <source clone="true" xpath="get-property('subagencycategory')/m0:string"/>
+                     <target action="child"
+                             xpath="get-property('operation','SubOrgAgencyCategoriesSvcAltResponse')"/>
+                  </enrich>
+               </sequence>
+            </target>
+         </iterate>
+         <property name="SubOrgAgencyCategoriesSvcAltResponse"
+                   expression="get-property('operation','SubOrgAgencyCategoriesSvcAltResponse')"
+                   scope="default"
+                   type="OM"/>
+      </then>
+      <else/>
+   </filter>
+   <filter xmlns:ns="http://org.apache.synapse/xsd"
+           xmlns:m0="http://ws.wso2.org/dataservice"
+           xpath="get-property('SubOrgAgencySvcResponse')/m0:organization">
+      <then>
+         <enrich>
+            <source clone="true" xpath="get-property('SubOrgAgencyCategoriesSvcAltResponse')"/>
+            <target action="child"
+                    xpath="get-property('SubOrgAgencySvcResponse')/m0:organization"/>
+         </enrich>
+      </then>
+      <else/>
+   </filter>
+</sequence>

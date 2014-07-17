@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="receiveKeywordsSequence">
+   <log>
+      <property name="keyword_service_response" value="*****"/>
+   </log>
+   <property xmlns:ns="http://org.apache.synapse/xsd"
+             xmlns:m0="http://ws.wso2.org/dataservice"
+             name="KeywordSvcResponse"
+             expression="$body/m0:keywords"
+             scope="default"
+             type="OM"/>
+   <enrich>
+      <source type="inline" clone="true">
+         <keywords xmlns="http://ws.wso2.org/dataservice"/>
+      </source>
+      <target type="property" property="KeywordSvcAltResponse"/>
+   </enrich>
+   <filter xmlns:ns="http://org.apache.synapse/xsd"
+           xmlns:m0="http://ws.wso2.org/dataservice"
+           xpath="get-property('KeywordSvcResponse')/m0:keyword">
+      <then>
+         <property name="KeywordSvcAltResponse"
+                   expression="get-property('KeywordSvcAltResponse')"
+                   scope="operation"
+                   type="OM"/>
+         <iterate continueParent="true"
+                  expression="//m0:keywords/m0:keyword/m0:string"
+                  sequential="true">
+            <target>
+               <sequence>
+                  <property name="svckeyword" expression="$body" scope="default" type="OM"/>
+                  <enrich>
+                     <source clone="true" xpath="get-property('svckeyword')/m0:string"/>
+                     <target action="child"
+                             xpath="get-property('operation','KeywordSvcAltResponse')"/>
+                  </enrich>
+                  <property name="KeywordSvcAltResponse"
+                            expression="get-property('KeywordSvcAltResponse')"
+                            scope="operation"
+                            type="OM"/>
+               </sequence>
+            </target>
+         </iterate>
+         <property name="KeywordSvcAltResponse"
+                   expression="get-property('operation','KeywordSvcAltResponse')"
+                   scope="default"
+                   type="OM"/>
+      </then>
+      <else/>
+   </filter>
+   <filter xmlns:ns="http://org.apache.synapse/xsd"
+           xmlns:m0="http://ws.wso2.org/dataservice"
+           xpath="get-property('ServicesSvcResponse')">
+      <then>
+         <enrich>
+            <source clone="true" xpath="get-property('KeywordSvcAltResponse')"/>
+            <target action="sibling" xpath="get-property('ServicesSvcResponse')/m0:name"/>
+         </enrich>
+      </then>
+      <else/>
+   </filter>
+</sequence>

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="receiveSubOrgAgencySequence"
+	onError="fault">
+	<property xmlns:ns="http://org.apache.synapse/xsd" xmlns:m0="http://ws.wso2.org/dataservice"
+		name="SubOrgAgencySvcResponse" expression="$body/m0:organizations"
+		scope="default" type="OM" />
+	<property xmlns:ns="http://org.apache.synapse/xsd" xmlns:m0="http://ws.wso2.org/dataservice"
+		name="SubOrgImageId" expression="//m0:imageId/text()" scope="default"
+		type="STRING" />
+	<property xmlns:ns="http://org.apache.synapse/xsd" xmlns:m0="http://ws.wso2.org/dataservice"
+		name="SubOrgAddressId" expression="//m0:addressId/text()" scope="default"
+		type="STRING" />
+	<property xmlns:ns="http://org.apache.synapse/xsd" xmlns:m0="http://ws.wso2.org/dataservice"
+		name="SubOrgId" expression="//m0:id/text()" scope="default" type="STRING" />
+	<property xmlns:ns="http://org.apache.synapse/xsd" xmlns:m0="http://ws.wso2.org/dataservice"
+		name="SubOrgLevelLookupId" expression="//m0:levelLookupId/text()"
+		scope="default" type="STRING" />
+
+
+	<payloadFactory media-type="xml">
+		<format>
+			<m1:Select_LookupID xmlns:m1="http://ws.wso2.org/dataservice">
+				<m1:LevelLookupID>$1</m1:LevelLookupID>
+			</m1:Select_LookupID>
+		</format>
+		<args>
+			<arg xmlns:ns="http://org.apache.synapse/xsd" evaluator="xml"
+				expression="get-property('SubOrgLevelLookupId')" />
+		</args>
+	</payloadFactory>
+	<property name="SOAPAction" value="urn:Select_LookupID" scope="transport" />
+	<call>
+		<endpoint key="AgencySvcEndpoint" />
+	</call>
+	<sequence key="receiveSubOrgAgencyLevelLookupSequence" />
+	<payloadFactory media-type="xml">
+		<format>
+			<m1:Select_Image xmlns:m1="http://ws.wso2.org/dataservice">
+				<m1:ImageID>$1</m1:ImageID>
+			</m1:Select_Image>
+		</format>
+		<args>
+			<arg xmlns:ns="http://org.apache.synapse/xsd" evaluator="xml"
+				expression="get-property('SubOrgImageId')" />
+		</args>
+	</payloadFactory>
+	<property name="SOAPAction" value="urn:Select_Image" scope="transport" />
+	<call>
+		<endpoint key="ImageSvcEndpoint" />
+	</call>
+	<sequence key="receiveSubOrgImageSequence" />
+	<payloadFactory media-type="xml">
+		<format>
+			<m1:Select_Address xmlns:m1="http://ws.wso2.org/dataservice">
+				<m1:AddressID>$1</m1:AddressID>
+			</m1:Select_Address>
+		</format>
+		<args>
+			<arg xmlns:ns="http://org.apache.synapse/xsd" xmlns:m0="http://ws.wso2.org/dataservice"
+				evaluator="xml" expression="get-property('SubOrgAddressId')" />
+		</args>
+	</payloadFactory>
+	<property name="SOAPAction" value="urn:Select_Address" scope="transport" />
+	<call>
+		<endpoint key="AddressSvcEndpoint" />
+	</call>
+	<sequence key="receiveSubOrgAddressSequence" />
+	<payloadFactory media-type="xml">
+		<format>
+			<m1:Select_RssFeed xmlns:m1="http://ws.wso2.org/dataservice">
+				<m1:OrgID>$1</m1:OrgID>
+				<m1:RssFeedID>$2</m1:RssFeedID>
+			</m1:Select_RssFeed>
+		</format>
+		<args>
+			<arg xmlns:ns="http://org.apache.synapse/xsd" xmlns:m0="http://ws.wso2.org/dataservice"
+				evaluator="xml" expression="get-property('SubOrgId')" />
+			<arg value="null" />
+		</args>
+	</payloadFactory>
+	<property name="SOAPAction" value="urn:Select_RssFeed" scope="transport"
+		type="STRING" />
+	<call>
+		<endpoint key="StatisticsSvcEndpoint" />
+	</call>
+	<sequence key="receiveSubOrgRssStatisticsSequence" />
+	<payloadFactory media-type="xml">
+		<format>
+			<m1:Select_SocialMedia xmlns:m1="http://ws.wso2.org/dataservice">
+				<m1:orgID>$1</m1:orgID>
+				<m1:SocialMediaID>$2</m1:SocialMediaID>
+			</m1:Select_SocialMedia>
+		</format>
+		<args>
+			<arg xmlns:ns="http://org.apache.synapse/xsd" xmlns:m0="http://ws.wso2.org/dataservice"
+				evaluator="xml" expression="get-property('SubOrgId')" />
+			<arg value="null" />
+		</args>
+	</payloadFactory>
+	<property name="SOAPAction" value="urn:Select_SocialMedia"
+		scope="transport" />
+	<call>
+		<endpoint key="StatisticsSvcEndpoint" />
+	</call>
+	<sequence key="receiveSubOrgSocialMediaStatisticsSequence" />
+	<payloadFactory media-type="xml">
+		<format>
+			<m1:Select_Contact xmlns:m1="http://ws.wso2.org/dataservice">
+				<m1:orgID>$1</m1:orgID>
+				<m1:serviceID>$2</m1:serviceID>
+				<m1:contactID>$3</m1:contactID>
+			</m1:Select_Contact>
+		</format>
+		<args>
+			<arg xmlns:ns="http://org.apache.synapse/xsd" evaluator="xml"
+				expression="get-property('SubOrgId')" />
+			<arg value="null" />
+			<arg value="null" />
+		</args>
+	</payloadFactory>
+	<property name="SOAPAction" value="urn:Select_Contact" scope="transport" />
+	<call>
+		<endpoint key="ContactSvcEndpoint" />
+	</call>
+	<sequence key="receiveSubOrgAgencyContactSequence" />
+	<payloadFactory media-type="xml">
+		<format>
+			<m1:Select_Keyword xmlns:m1="http://ws.wso2.org/dataservice">
+				<m1:OrgID>$1</m1:OrgID>
+				<m1:ServiceID>$2</m1:ServiceID>
+				<m1:KeywordID>$3</m1:KeywordID>
+			</m1:Select_Keyword>
+		</format>
+		<args>
+			<arg xmlns:ns="http://org.apache.synapse/xsd" evaluator="xml"
+				expression="get-property('SubOrgId')" />
+			<arg value="null" />
+			<arg value="null" />
+		</args>
+	</payloadFactory>
+	<property name="SOAPAction" value="urn:Select_Keyword" scope="transport" />
+	<call>
+		<endpoint key="AgencySvcEndpoint" />
+	</call>
+	<sequence key="receiveSubOrgAgencyKeywordsSequence" />
+	<payloadFactory media-type="xml">
+		<format>
+			<m1:Select_Category xmlns:m1="http://ws.wso2.org/dataservice">
+				<m1:OrgID>$1</m1:OrgID>
+				<m1:ServiceID>$2</m1:ServiceID>
+				<m1:CategoryID>$3</m1:CategoryID>
+			</m1:Select_Category>
+		</format>
+		<args>
+			<arg xmlns:ns="http://org.apache.synapse/xsd" evaluator="xml"
+				expression="get-property('SubOrgId')" />
+			<arg value="null" />
+			<arg value="null" />
+		</args>
+	</payloadFactory>
+	<property name="SOAPAction" value="urn:Select_Category" scope="transport" />
+	<call>
+		<endpoint key="AgencySvcEndpoint" />
+	</call>
+	<sequence key="receiveSubOrgAgencyCategoriesSequence" />
+	<payloadFactory media-type="xml">
+		<format>
+			<m1:Select_Page xmlns:m1="http://ws.wso2.org/dataservice">
+				<m1:orgid>$1</m1:orgid>
+				<m1:pageid>$2</m1:pageid>
+			</m1:Select_Page>
+		</format>
+		<args>
+			<arg xmlns:ns="http://org.apache.synapse/xsd" xmlns:m0="http://ws.wso2.org/dataservice"
+				evaluator="xml" expression="get-property('SubOrgId')" />
+			<arg value="null" />
+		</args>
+	</payloadFactory>
+	<property name="SOAPAction" value="urn:Select_Page" scope="transport" />
+	<call>
+		<endpoint key="StatisticsSvcEndpoint" />
+	</call>
+	<sequence key="receiveSubOrgMostVisitedPagesSequence" />
+	<payloadFactory media-type="xml">
+		<format>
+			<m1:Select_Service xmlns:m1="http://ws.wso2.org/dataservice">
+				<m1:OrgID>$1</m1:OrgID>
+				<m1:ServiceID>$2</m1:ServiceID>
+			</m1:Select_Service>
+		</format>
+		<args>
+			<arg xmlns:ns="http://org.apache.synapse/xsd" evaluator="xml"
+				expression="get-property('SubOrgId')" />
+			<arg value="null" />
+		</args>
+	</payloadFactory>
+	<property name="SOAPAction" value="urn:Select_Service" scope="transport" />
+	<send receive="receiveSubOrgServicesSequence">
+		<endpoint key="AgencySvcEndpoint" />
+	</send>
+</sequence>
