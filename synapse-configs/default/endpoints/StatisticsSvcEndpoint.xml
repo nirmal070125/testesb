@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <endpoint xmlns="http://ws.apache.org/ns/synapse" name="StatisticsSvcEndpoint">
-   <address uri="http://appserver.qaaz.gov/t/wso2.com/services/statistics_service/"/>
+   <address uri="http://appserver.qaaz.gov/services/t/wso2.com/statistics_service/"/>
 </endpoint>

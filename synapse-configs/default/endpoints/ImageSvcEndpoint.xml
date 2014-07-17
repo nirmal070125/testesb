@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <endpoint xmlns="http://ws.apache.org/ns/synapse" name="ImageSvcEndpoint">
-   <address uri="http://appserver.qaaz.gov/t/wso2.com/services/image_service/"/>
+   <address uri="http://appserver.qaaz.gov/services/t/wso2.com/image_service/"/>
 </endpoint>
